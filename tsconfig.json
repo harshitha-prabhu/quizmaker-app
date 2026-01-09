@@ -15,7 +15,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
     // Performance optimizations
     "assumeChangesOnlyAffectDirectDependencies": true,
@@ -45,3 +45,4 @@
     "**/*.spec.tsx"
   ]
 }
+
