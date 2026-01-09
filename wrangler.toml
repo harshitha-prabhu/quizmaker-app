@@ -6,7 +6,7 @@ compatibility_date = "2026-01-09"
 NODE_ENV = "production"
 
 [build]
-command = "opennextjs-cloudflare build"
+command = "npm run build:cloudflare"
 
 [env.production]
 route = "https://quizmaker-app.pages.dev/*"
