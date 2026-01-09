@@ -1,0 +1,45 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "quizmaker-app",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2025-12-01",
+	"compatibility_flags": [
+		"nodejs_compat",
+		"global_fetch_strictly_public"
+	],
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".open-next/assets"
+	},
+	// Temporarily disabled image optimization due to Windows compatibility issues
+	// The resvg.wasm file is not properly bundled on Windows
+	// Re-enable when deploying from Linux/WSL or CI/CD
+	// "images": {
+	// 	// Enable image optimization
+	// 	// see https://opennext.js.org/cloudflare/howtos/image
+	// 	"binding": "IMAGES"
+	// },
+	"services": [
+		{
+			// Self-reference service binding, the service name must match the worker name
+			// see https://opennext.js.org/cloudflare/caching
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "quizmaker-app"
+		}
+	],
+	"observability": {
+		"enabled": true
+	},
+	"d1_databases": [
+		{
+			"binding": "quizmaker_demo_app_database",
+			"database_name": "quizmaker-demo-app-database",
+			"database_id": "876ab727-21e2-480a-946f-e02103ebaafe",
+			"remote": true
+		}
+	]
+}

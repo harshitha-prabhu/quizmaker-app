@@ -1,0 +1,11 @@
+name = "quizmaker-app"
+main = ".next/standalone/server.js"
+compatibility_date = "2024-11-01"
+
+# Avoid Windows resvg.wasm bundling errors
+[build]
+upload.wasm_modules = []
+
+rules = [
+  { type = "Text", globs = ["**/*.wasm"], fallthrough = true }
+]
