@@ -2,8 +2,10 @@
  * Unit tests for D1 client utilities
  */
 
+/// <reference types="../../cloudflare-env.d.ts" />
+
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { D1Database, D1Result } from '@cloudflare/workers-types';
+import type { D1Database } from '@cloudflare/workers-types';
 import {
   getDatabase,
   generateId,
@@ -12,7 +14,6 @@ import {
   executeMutation,
   executeBatch,
 } from './d1-client';
-import type { CloudflareEnv } from '../../cloudflare-env';
 
 describe('d1-client', () => {
   describe('getDatabase', () => {
@@ -31,20 +32,22 @@ describe('d1-client', () => {
   describe('generateId', () => {
     it('should generate a UUID when crypto.randomUUID is available', () => {
       const mockUUID = '123e4567-e89b-12d3-a456-426614174000';
-      global.crypto = {
-        randomUUID: vi.fn(() => mockUUID) as never,
+      const mockRandomUUID = vi.fn(() => mockUUID);
+      globalThis.crypto = {
+        randomUUID: mockRandomUUID,
+        subtle: {} as SubtleCrypto,
+        getRandomValues: vi.fn(),
       } as Crypto;
 
       const result = generateId();
 
       expect(result).toBe(mockUUID);
-      expect(global.crypto.randomUUID).toHaveBeenCalled();
+      expect(mockRandomUUID).toHaveBeenCalled();
     });
 
     it('should fallback to timestamp-based ID when crypto is not available', () => {
-      const originalCrypto = global.crypto;
-      // @ts-expect-error - intentionally removing crypto for test
-      delete global.crypto;
+      const originalCrypto = globalThis.crypto;
+      delete (globalThis as { crypto?: Crypto }).crypto;
 
       const result = generateId();
 
@@ -52,13 +55,16 @@ describe('d1-client', () => {
       expect(typeof result).toBe('string');
       expect(result.length).toBeGreaterThan(10);
 
-      global.crypto = originalCrypto;
+      globalThis.crypto = originalCrypto;
     });
   });
 
   describe('executeQuery', () => {
     let mockDb: D1Database;
-    let mockStmt: any;
+    let mockStmt: {
+      bind: ReturnType<typeof vi.fn>;
+      all: ReturnType<typeof vi.fn>;
+    };
 
     beforeEach(() => {
       mockStmt = {
@@ -152,7 +158,10 @@ describe('d1-client', () => {
 
   describe('executeMutation', () => {
     let mockDb: D1Database;
-    let mockStmt: any;
+    let mockStmt: {
+      bind: ReturnType<typeof vi.fn>;
+      run: ReturnType<typeof vi.fn>;
+    };
 
     beforeEach(() => {
       mockStmt = {
@@ -190,8 +199,12 @@ describe('d1-client', () => {
 
   describe('executeBatch', () => {
     let mockDb: D1Database;
-    let mockStmt1: any;
-    let mockStmt2: any;
+    let mockStmt1: {
+      bind: ReturnType<typeof vi.fn>;
+    };
+    let mockStmt2: {
+      bind: ReturnType<typeof vi.fn>;
+    };
 
     beforeEach(() => {
       mockStmt1 = {
