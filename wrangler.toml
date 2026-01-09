@@ -1,11 +1,12 @@
 name = "quizmaker-app"
-main = ".next/standalone/server.js"
-compatibility_date = "2024-11-01"
+main = ".open-next/worker.js"
+compatibility_date = "2026-01-09"
 
-# Avoid Windows resvg.wasm bundling errors
+[vars]
+NODE_ENV = "production"
+
 [build]
-upload.wasm_modules = []
+command = "opennextjs-cloudflare build"
 
-rules = [
-  { type = "Text", globs = ["**/*.wasm"], fallthrough = true }
-]
+[env.production]
+route = "https://quizmaker-app.pages.dev/*"
