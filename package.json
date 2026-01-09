@@ -14,8 +14,7 @@
 		"deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
 		"upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
 		"preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
-		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
-		"build:cloudflare": "next-on-pages build"
+		"cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
@@ -43,7 +42,6 @@
 		"zod": "^4.3.5"
 	},
 	"devDependencies": {
-		"@cloudflare/next-on-pages": "^1.13.16",
 		"@cloudflare/workers-types": "^4.20260107.1",
 		"@eslint/eslintrc": "^3",
 		"@tailwindcss/postcss": "^4",
