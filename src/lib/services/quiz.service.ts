@@ -9,7 +9,6 @@ import {
   executeQuery,
   executeQueryFirst,
   executeMutation,
-  executeBatch,
   generateId,
 } from '@/lib/d1-client';
 
