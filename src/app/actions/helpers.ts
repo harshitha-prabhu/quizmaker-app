@@ -26,7 +26,14 @@ export async function getDb(): Promise<D1Database> {
     const { env } = getCloudflareContext();
     
     // Access the D1 database binding from the environment
-    return getDatabase(env as CloudflareEnv);
+    const db = getDatabase(env as CloudflareEnv);
+    
+    // Verify database connection by checking if it's accessible
+    if (!db) {
+      throw new Error('Database binding is null or undefined');
+    }
+    
+    return db;
   } catch (error) {
     // If getCloudflareContext() fails, try fallback to globalThis.env
     // This might be needed in some edge cases or during development
@@ -34,13 +41,18 @@ export async function getDb(): Promise<D1Database> {
     if (typeof globalThis !== 'undefined' && (globalThis as any).env) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const env = (globalThis as any).env as CloudflareEnv;
-      return getDatabase(env);
+      const db = getDatabase(env);
+      if (db) {
+        return db;
+      }
     }
     
     // If both methods fail, throw a descriptive error
+    const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(
       `Database access: CloudflareEnv not found in runtime context. ` +
-      `Error: ${error instanceof Error ? error.message : String(error)}`
+      `Error: ${errorMessage}. ` +
+      `Make sure initOpenNextCloudflareForDev() is called in next.config.ts and the dev server is restarted.`
     );
   }
 }

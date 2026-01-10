@@ -1,5 +1,27 @@
 import type { NextConfig } from "next";
 
+// Initialize OpenNext Cloudflare for development
+// This must be called before the config is exported
+// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings
+// It automatically reads from wrangler.jsonc or wrangler.toml
+if (process.env.NODE_ENV === 'development') {
+	try {
+		// eslint-disable-next-line @typescript-eslint/no-require-imports
+		const { initOpenNextCloudflareForDev } = require("@opennextjs/cloudflare");
+
+		// Initialize - this sets up the Cloudflare context for local development
+		// It reads D1 database bindings from wrangler.jsonc and uses the local database
+		// The local database should have all migrations applied via: 
+		// npx wrangler d1 migrations apply quizmaker-demo-app-database --local
+		initOpenNextCloudflareForDev();
+
+		console.log('[OpenNext] Initialized Cloudflare dev environment');
+	} catch (error) {
+		console.error('[OpenNext] Failed to initialize Cloudflare dev environment:', error);
+		// Don't throw - let it fail gracefully
+	}
+}
+
 const nextConfig: NextConfig = {
 	// Optimize build performance
 	//swcMinify: true,
@@ -38,20 +60,5 @@ const nextConfig: NextConfig = {
 		} : false,
 	},
 };
-
-// Enable calling `getCloudflareContext()` in `next dev` only.
-// See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
-// Only initialize in development mode, not during build
-// Use require() with try-catch to avoid loading during build
-if (process.env.NODE_ENV === 'development' && process.env.NEXT_PHASE !== 'phase-production-build') {
-	try {
-		// eslint-disable-next-line @typescript-eslint/no-require-imports
-		const { initOpenNextCloudflareForDev } = require("@opennextjs/cloudflare");
-		initOpenNextCloudflareForDev();
-	} catch {
-		// Silently fail if not available during build
-		// This is expected during build phase
-	}
-}
 
 export default nextConfig;

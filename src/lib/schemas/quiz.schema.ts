@@ -50,16 +50,26 @@ export const CreateQuizSchema = z.object({
     .min(1, 'Title is required')
     .max(200, 'Title must be at most 200 characters')
     .trim(),
-  description: z
-    .string()
-    .max(1000, 'Description must be at most 1000 characters')
-    .trim()
-    .optional(),
-  instructions: z
-    .string()
-    .max(500, 'Instructions must be at most 500 characters')
-    .trim()
-    .optional(),
+  description: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined || val === '') return undefined;
+      return typeof val === 'string' ? val.trim() : val;
+    },
+    z
+      .string()
+      .max(1000, 'Description must be at most 1000 characters')
+      .optional()
+  ),
+  instructions: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined || val === '') return undefined;
+      return typeof val === 'string' ? val.trim() : val;
+    },
+    z
+      .string()
+      .max(500, 'Instructions must be at most 500 characters')
+      .optional()
+  ),
   questions: z
     .array(QuestionSchema)
     .min(1, 'At least one question is required'),
@@ -73,18 +83,27 @@ export const UpdateQuizSchema = z.object({
     .string()
     .min(1, 'Title is required')
     .max(200, 'Title must be at most 200 characters')
-    .trim()
-    .optional(),
-  description: z
-    .string()
-    .max(1000, 'Description must be at most 1000 characters')
-    .trim()
-    .optional(),
-  instructions: z
-    .string()
-    .max(500, 'Instructions must be at most 500 characters')
-    .trim()
-    .optional(),
+    .trim(),
+  description: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined || val === '') return undefined;
+      return typeof val === 'string' ? val.trim() : val;
+    },
+    z
+      .string()
+      .max(1000, 'Description must be at most 1000 characters')
+      .optional()
+  ),
+  instructions: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined || val === '') return undefined;
+      return typeof val === 'string' ? val.trim() : val;
+    },
+    z
+      .string()
+      .max(500, 'Instructions must be at most 500 characters')
+      .optional()
+  ),
   questions: z
     .array(QuestionSchema)
     .min(1, 'At least one question is required')

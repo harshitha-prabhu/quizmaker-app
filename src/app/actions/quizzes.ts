@@ -37,10 +37,18 @@ export async function createQuiz(
     }
 
     // Parse and validate form data
+    // Convert null values to undefined for optional fields
+    const descriptionValue = formData.get('description');
+    const instructionsValue = formData.get('instructions');
+    
     const rawData = {
       title: formData.get('title') as string,
-      description: formData.get('description') as string | null,
-      instructions: formData.get('instructions') as string | null,
+      description: descriptionValue && descriptionValue !== '' 
+        ? (descriptionValue as string) 
+        : undefined,
+      instructions: instructionsValue && instructionsValue !== '' 
+        ? (instructionsValue as string) 
+        : undefined,
       questions: JSON.parse(formData.get('questions') as string || '[]'),
     };
 
